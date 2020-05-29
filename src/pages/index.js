@@ -19,6 +19,12 @@ export default function Home() {
         <App />
       </main>
 
+      <style jsx>{`
+        h1 {
+          text-align: center;
+        }
+      `}</style>
+
       <style jsx global>{`
         html,
         body {
