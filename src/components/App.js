@@ -79,6 +79,9 @@ export default function App() {
           countryCode: 'US',
         },
       },
+      {
+        supportedMethods: 'https://web-payments-playground.now.sh/api/pay',
+      },
     ];
     const details = {
       displayItems: selectedItems.map(item => ({

@@ -1,0 +1,11 @@
+{
+  "short_name": "Sanghyeon Pay",
+  "name": "Sanghyeon Pay",
+  "icons": [{
+    "src": "https://avatars0.githubusercontent.com/u/4126644?s=24&v=4",
+    "sizes": "24x24"
+  },{
+    "src": "https://avatars0.githubusercontent.com/u/4126644?s=32&v=4",
+    "sizes": "32x32"
+  }]
+}

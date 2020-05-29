@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <div className="container">
       <Head>
-        <title>Playground for Payment Request API</title>
+        <title>Playground for Web Payments API</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         <link rel="icon" href="/favicon.ico" />
 
@@ -14,7 +14,7 @@ export default function Home() {
       </Head>
 
       <main>
-        <h1>This is a playground for <a href="https://www.w3.org/TR/payment-request" target="_blank" rel="noreferrer noopener">Payment Request API</a>.</h1>
+        <h1>This is a playground for <a href="https://www.w3.org/TR/payment-request" target="_blank" rel="noreferrer noopener">Web Payments API</a>.</h1>
         <hr />
         <App />
       </main>
