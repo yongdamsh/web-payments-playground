@@ -7,5 +7,9 @@
   },{
     "src": "https://avatars0.githubusercontent.com/u/4126644?s=32&v=4",
     "sizes": "32x32"
-  }]
+  }],
+  "serviceworker": {
+    "src": "/p/service_worker.js",
+    "use_cache": false
+  }
 }
