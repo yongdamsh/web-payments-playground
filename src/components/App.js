@@ -47,6 +47,9 @@ const applePayPaymentMethod = {
 const myOwnPaymentMethod = {
   supportedMethods: 'https://web-payments-playground.now.sh/api/pay',
 };
+const bobPayPaymentMethod = {
+  supportedMethods: 'https://bobpay.xyz/pay',
+};
 
 export default function App() {
   const [selectedItemMap, setSelectedItemMap] = useState({});
@@ -140,23 +143,43 @@ export default function App() {
 
   function makePaymentRequest() {
     const methodData = [
-      basicCardPaymentMethod,
+      bobPayPaymentMethod,
+      myOwnPaymentMethod,
       googlePayPaymentMethod,
       applePayPaymentMethod,
-      myOwnPaymentMethod,
+      basicCardPaymentMethod,
     ];
     const details = makePaymentDetails();
     const options = {
       requestShipping: true,
       requestPayerEmail: true,
       requestPayerPhone: true,
-      requestPayerName: true
+      requestPayerName: true,
     };
     const request = new PaymentRequest(
       methodData,
       details,
       options
     );
+
+    request.addEventListener('shippingaddresschange', event => {
+      event.updateWith({
+        ...details
+      });
+    });
+
+    request.addEventListener('shippingoptionchange', event => {
+      const { shippingOption } = event.target;
+      const shipppingOptionsWithSelected = details.shippingOptions.map(option => ({
+        ...option,
+        selected: option.id === shippingOption,
+      }));
+
+      event.updateWith({
+        ...details,
+        shippingOptions: shipppingOptionsWithSelected,
+      });
+    });
   
     return request;
   }

@@ -1,5 +1,5 @@
 repos:
 -   repo: https://github.com/thlorenz/doctoc
-    sha: v1.4.0
+    rev: 164f78e6452413a9717f58df8cf9dcb200b6c0f7
     hooks:
     -   id: doctoc
