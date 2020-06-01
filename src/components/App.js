@@ -1,10 +1,52 @@
 import { useState, useEffect } from 'react';
 
 const items = [
-  { id: 1, name: 'Item 1', price: 1000, discountRate: 0 },
-  { id: 2, name: 'Item 2', price: 2000, discountRate: 10 },
-  { id: 3, name: 'Item 3', price: 3000, discountRate: 15 },
+  { id: 1, name: 'Item 1', price: 1000 },
+  { id: 2, name: 'Item 2', price: 2000 },
+  { id: 3, name: 'Item 3', price: 3000 },
 ];
+
+const basicCardPaymentMethod = {
+  supportedMethods: 'basic-card',
+  data: {
+    supportedNetworks: ['visa', 'mastercard', 'amex'],
+    supportedTypes: ['credit', 'debit'],
+  },
+};
+const googlePayPaymentMethod = {
+  supportedMethods: 'https://google.com/pay',
+  data: {
+    environment: 'TEST',
+    apiVersion: 1,
+    allowedPaymentMethods: ['CARD', 'TOKENIZED_CARD'],
+    paymentMethodTokenizationParameters: {
+      tokenizationType: 'PAYMENT_GATEWAY',
+      // Check with your payment gateway on the parameters to pass.
+      parameters: {}
+    },
+    cardRequirements: {
+      allowedCardNetworks: ['AMEX', 'DISCOVER', 'MASTERCARD', 'VISA'],
+      billingAddressRequired: true,
+      billingAddressFormat: 'MIN'
+    },
+    phoneNumberRequired: true,
+    emailRequired: true,
+    shippingAddressRequired: true
+  },
+};
+const applePayPaymentMethod = {
+  supportedMethods: 'https://apple.com/apple-pay',
+  data: {
+    version: 3,
+    merchantIdentifier: 'merchant.com.example',
+    merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
+    supportedNetworks: ['amex', 'discover', 'masterCard', 'visa'],
+    countryCode: 'US',
+  },
+};
+const myOwnPaymentMethod = {
+  supportedMethods: 'https://web-payments-playground.now.sh/api/pay',
+};
 
 export default function App() {
   const [selectedItemMap, setSelectedItemMap] = useState({});
@@ -30,29 +72,41 @@ export default function App() {
 
     const paymentRequest = makePaymentRequest();
 
-    try {
-      const canPay = await paymentRequest.canMakePayment();
+    paymentRequest.addEventListener('shippingaddresschange', event => {
+      // event.updateWith();
+    });
 
-      if (!canPay) {
-        throw new Error('cannot pay');
-      }
+    paymentRequest.addEventListener('shippingoptionchange', event => {
+      // event.updateWith();
+    });
+
+    try {
+      // TODO: 각 payment method가 지원되는지 확인하는 방식으로 수정하자
+      // const canPay = await paymentRequest.canMakePayment();
+
+      // if (!canPay) {
+      //   throw new Error('cannot pay');
+      // }
 
       const paymentResponse = await paymentRequest.show();
       console.log('paymentResponse', paymentResponse);
 
       try {
-        const paymentResult = await fetch('/api/pay', {
+        const apiResponse = await fetch('/api/pay', {
           method: 'POST',
           credentials: 'same-origin',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(paymentResponse.toJSON())
-        }).json();
+        });
+        const paymentResult = apiResponse.json();
   
         await paymentResponse.complete(paymentResult.success ? 'sucess' : 'fail');
+
         setReceipt(paymentResponse);
       } catch (error) {
+        console.error(error);
         paymentResponse.complete('fail');
       }
       
@@ -61,29 +115,8 @@ export default function App() {
     }
   }
 
-  function makePaymentRequest() {
-    const methodData = [
-      {
-        supportedMethods: 'basic-card',
-        data: {
-          supportedNetworks: ['visa', 'mastercard'],
-        },
-      },
-      {
-        supportedMethods: 'https://apple.com/apple-pay',
-        data: {
-          version: 3,
-          merchantIdentifier: 'merchant.com.example',
-          merchantCapabilities: ['supports3DS', 'supportsCredit', 'supportsDebit'],
-          supportedNetworks: ['amex', 'discover', 'masterCard', 'visa'],
-          countryCode: 'US',
-        },
-      },
-      {
-        supportedMethods: 'https://web-payments-playground.now.sh/api/pay',
-      },
-    ];
-    const details = {
+  function makePaymentDetails() {
+    return {
       displayItems: selectedItems.map(item => ({
         label: item.name,
         amount: { currency: 'KRW', value : item.price },
@@ -91,8 +124,28 @@ export default function App() {
       total:  {
         label: 'Total',
         amount: { currency: 'KRW', value : computeTotalPrice() },
-      }
+      },
+      shippingOptions: [
+        {
+          id: 'economy',
+          label: 'Economy Shipping (5-7 Days)',
+          amount: {
+            currency: 'USD',
+            value: '0',
+          },
+        },
+      ],
     };
+  }
+
+  function makePaymentRequest() {
+    const methodData = [
+      basicCardPaymentMethod,
+      googlePayPaymentMethod,
+      applePayPaymentMethod,
+      myOwnPaymentMethod,
+    ];
+    const details = makePaymentDetails();
     const options = {
       requestShipping: true,
       requestPayerEmail: true,
@@ -141,6 +194,7 @@ export default function App() {
             <li key={item.id}>{item.name} ({item.price} 원)</li>
           ))}
         </ul>
+        <label><input type="checkbox" /> 10% 할인 쿠폰 적용</label>
         <h3>총 {computeTotalPrice()} 원</h3>
         
         <div className="navigation">
@@ -160,6 +214,7 @@ export default function App() {
           margin: 0 auto;
           padding-top: 40px;
         }
+
         .page {
           height: 100vh;
         }
@@ -193,8 +248,6 @@ export default function App() {
           font-size: 24px;
           text-align: center;
         }
-
-        
       `}</style>
     </div>
   );

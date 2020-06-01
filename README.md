@@ -1,30 +1,42 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Web Payments
 
-## Getting Started
 
-First, run the development server:
+## Table of Contents
 
-```bash
-npm run dev
-# or
-yarn dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/import?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+ℹ️ 시작하기 전
+  - 이 repo의 목적
+  - 개발 중인 스펙
+    - 특정 스펙 버전 기준
+  - 브라우저 지원
+    - Chrome 기준
+  - HTTPS
+  - 개발 환경
+1. Overview
+2. 결제 프로세스 동작 방식
+3. API 살펴보기
+  - Payment Request API
+  - Payment Handler API
+    - 서비스 워커
+4. 사용 사례
+  - https://developers.google.com/web/updates/2018/06/payment-handler-api
+  - Google Pay
+  - Apple Pay
+  - Samsung Pay (X)
+  - BobPay
+    - https://bobpay.xyz/
+    - Own Payment Method
+5. Developing My Own Payment Method(or App) 
+  - 자체 결제 서비스 구현 과정을 설명하자
+6. 미지원
+  - 환불
+  - 총요금 계산
+7. 더 알아보기
+  - autofill
+  - polyfill
+  - 안드로이드 결제 앱 개발 가이드
+8. 참고 자료
+  - Google Web Fundamentals Payment Request API: https://developers.google.com/web/fundamentals/payments
+  - W3C Payment Request API: https://www.w3.org/TR/payment-request/
+  - W3C Payment Handler API: https://www.w3.org/TR/payment-handler/
+  - MDN Payment Request API: https://developer.mozilla.org/en-US/docs/Web/API/Payment_Request_API
+  - Payment Handler API
