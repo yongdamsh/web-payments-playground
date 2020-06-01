@@ -59,7 +59,7 @@ Payment Request API를 비롯해 결제 수단을 연동하는 표준 스펙을 
 
 ## Demo
 
-<img src="https://paymentrequest.show/images/pr-woocommerce.gif" alt="Stripe의 Payment Request API 자바스크립트 SDK를 활용한 WooCommerce Demo" width="400">
+<img src="https://github.com/agektmr/payment-request-show/blob/master/app/images/pr-woocommerce.gif?raw=true" alt="Stripe의 Payment Request API 자바스크립트 SDK를 활용한 WooCommerce Demo" width="400">
 
 출처: [paymentrequest.show](https://paymentrequest.show/)
 
