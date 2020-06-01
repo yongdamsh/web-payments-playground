@@ -10,7 +10,7 @@ Payment Request API를 비롯해 결제 수단을 연동하는 표준 스펙을 
 
 - [Overview](#overview)
   - [What is Payment Request API?](#what-is-payment-request-api)
-  - [Demo](#demo)
+  - [Demo: https://paymentrequest.show/](#demo-httpspaymentrequestshow)
 - [결제 프로세스 동작 방식](#%EA%B2%B0%EC%A0%9C-%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4-%EB%8F%99%EC%9E%91-%EB%B0%A9%EC%8B%9D)
 - [API 살펴보기](#api-%EC%82%B4%ED%8E%B4%EB%B3%B4%EA%B8%B0)
   - [Payment Request API](#payment-request-api)
@@ -57,12 +57,7 @@ Payment Request API를 비롯해 결제 수단을 연동하는 표준 스펙을 
 이러한 환경을 개선하기 위해 [Payment Request API](https://www.w3.org/TR/payment-request/)를 비롯한 Web Payments 명세가 개발되고 있습니다. 구매 양식 작성를 포함한 결제 프로세스의 사용자 워크플로를 향상시키는 다중 브라우저(cross-browser) 지원 표준입니다.
 2019-12-12 기준 W3C Candidate Recommendation 상태로 크롬, 사파리의 데스크탑/모바일 버전을 비롯한 모던 브라우저에서 지원 중입니다. 다만 연동 가능한 결제 방식의 차이가 있고, 크롬 안드로이드 버전에서 가장 폭넓게 지원하고 있습니다.
 
-## Demo
-
-<img src="https://github.com/agektmr/payment-request-show/blob/master/app/images/pr-woocommerce.gif?raw=true" alt="Stripe의 Payment Request API 자바스크립트 SDK를 활용한 WooCommerce Demo" width="400">
-
-출처: [paymentrequest.show](https://paymentrequest.show/)
-
+## Demo: https://paymentrequest.show/
 
 Payment Request API는 새로운 결제 방법이 아닌 프로세스 계층에 해당됩니다. 아래와 같은 [목표](https://developers.google.com/web/fundamentals/payments)를 가지고 있습니다.
 
