@@ -1,51 +1,79 @@
+// Ref: https://developers.google.com/web/fundamentals/payments/payment-apps-developer-guide/web-payment-apps#locate_a_web_app_manifest
+
+const origin = 'https://web-payments-playground.now.sh';
+const methodName = `${origin}/api/pay`;
+const checkoutURL = `${origin}/checkout`;
+let resolver;
 let paymentRequestEvent;
 
-self.addEventListener('canmakepayment', function(e) {
-  e.respondWith(true);
+self.addEventListener('paymentrequest', e => {
+  // Preserve the event for future use
+  paymentRequestEvent = e;
+  resolver = new PromiseResolver();
+
+  e.respondWith(resolver.promise);
+  e.openWindow(checkoutURL).then(client => {
+    if (client === null) {
+      resolver.reject('Failed to open window');
+    }
+  }).catch(err => {
+    resolver.reject(err);
+  });
 });
 
-self.addEventListener('paymentrequest', event => {
-  paymentRequestEvent = event;
-
-  const url = 'https://web-payments-playground.now.sh/checkout';
-
-  e.openWindow(url)
-    .then(window_client => {
-      if (window_client == null) {
-        paymentRequestEvent.respondWith(Promise.reject('Failed to open window'));
-      }
-    })
-    .catch(error => {
-      paymentRequestEvent.respondWith(Promise.reject(error));
-    });
-});
-
-self.addEventListener('message', event => {
-  if (event.data == 'payment_app_window_ready') {
+self.addEventListener('message', e => {
+  console.log('A message received:', e);
+  if (e.data === 'payment_app_window_ready') {
     sendPaymentRequest();
     return;
   }
 
-  if (event.data.methodName) {
-    paymentRequestEvent.respondWith(Promise.resolve(event.data));
-  } else {
-    paymentRequestEvent.respondWith(Promise.reject(event.data));
-  }
+  if (e.data.methodName === methodName) {  
+    resolver.resolve(e.data);  
+  } else {  
+    resolver.reject(e.data);  
+  }  
 });
 
-function sendPaymentRequest() {
-  // ref: https://www.w3.org/TR/service-workers-1/#clients-getall
-  const options = {
-    includeUncontrolled: false,
-    type: 'window',
-  };
+const sendPaymentRequest = () => {
+  if (!paymentRequestEvent) {
+    return;
+  }
 
-  clients.matchAll(options).then(function(clientList) {
-    for (let i = 0; i < clientList.length; i += 1) {
-      clientList[i].postMessage({
+  clients.matchAll({
+    includeUncontrolled: false,
+    type: 'window'
+  }).then(clientList => {
+    for (let client of clientList) {
+      client.postMessage({
         total: paymentRequestEvent.total,
         methodData: paymentRequestEvent.methodData,
       });
     }
   });
 }
+
+function PromiseResolver() {
+  this.resolve_;
+
+  this.reject_;
+
+  this.promise_ = new Promise(function(resolve, reject) {
+    this.resolve_ = resolve;
+    this.reject_ = reject;
+  }.bind(this));
+}
+
+PromiseResolver.prototype = {
+  get promise() {
+    return this.promise_;
+  },
+
+  get resolve() {
+    return this.resolve_;
+  },
+
+  get reject() {
+    return this.reject_;
+  },
+};
