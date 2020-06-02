@@ -1,0 +1,4 @@
+{
+  "default_applications": ["https://web-payments-playground.now.sh/manifest.json"],
+  "supported_origins": ["https://web-payments-playground.now.sh"]
+}
