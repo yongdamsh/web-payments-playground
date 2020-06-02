@@ -53,7 +53,7 @@ export default function Checkout() {
       </header>
       <section>
         {data?.total && (
-          <h2>Total: {data.total.toLocaleString()} 원</h2>
+          <h2>Total: {data.total.amount.value.toLocaleString()} 원</h2>
         )}
       </section>
       <footer>
