@@ -4,7 +4,7 @@ import App from '@/components/App'
 
 export default function Home() {
   return (
-    <div className="container">
+    <div>
       <Head>
         <title>Playground for Web Payments</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
