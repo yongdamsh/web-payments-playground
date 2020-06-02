@@ -53,7 +53,7 @@ const bobPayPaymentMethod = {
 
 export default function App() {
   const [selectedItemMap, setSelectedItemMap] = useState({});
-  const [receipt, setReceipt] = useState();
+  const [receipt, setReceipt] = useState(null);
   const [discountChecked, setDiscountChecked] = useState(false);
   const selectedItems = items.filter(item => selectedItemMap[item.id]);
 
@@ -250,8 +250,12 @@ export default function App() {
       </section>
 
       <section id="receipt" className="receipt page">
-        <h3>결제가 완료되었습니다.</h3>
-        <pre>{JSON.stringify(receipt, null, 2)}</pre>
+        {receipt && (
+          <>
+            <h3>결제가 완료되었습니다.</h3>
+            <pre>{JSON.stringify(receipt, null, 2)}</pre>
+          </>
+        )}
       </section>
 
       <style jsx>{`
