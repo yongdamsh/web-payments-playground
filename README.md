@@ -1,6 +1,6 @@
 # Web Payments
 
-Payment Request API를 비롯해 결제 수단을 연동하는 표준 스펙을 살펴보고 예제 어플리케이션을 작성하는 과정을 기록합니다.
+Payment Request API를 비롯해 결제 수단을 연동하는 표준 명세를 살펴보고 예제 어플리케이션을 작성하는 과정을 기록합니다.
 
 
 ## Table of Contents
@@ -37,7 +37,7 @@ Payment Request API를 비롯해 결제 수단을 연동하는 표준 스펙을 
 ---
 
 > ℹ️ 문서 작성 기준 및 개발 환경
-> - [W3C Candidate Recommendation 12 December 2019 스펙](https://www.w3.org/TR/2019/CR-payment-request-20191212/)을 기준으로 조사된 내용입니다.
+> - [W3C Candidate Recommendation 12 December 2019 명세](https://www.w3.org/TR/2019/CR-payment-request-20191212/)를 기준으로 조사된 내용입니다.
 > - 예제 코드는 Chrome browser를 기준으로 테스트 했습니다. 브라우저 지원 현황은 [여기](https://caniuse.com/#feat=payment-request)에서 확인하세요.
 > - Payment Request API는 HTTPS 서버에서만 동작합니다. 로컬에서 테스트하려면 [ngrok](https://ngrok.com/)과 같은 도구를 활용하세요.
 > - 예제 코드는 빠른 프로토타이핑과 배포를 위해 [Next.js](https://nextjs.org/)와 [Vercel](https://vercel.com/)로 작성했습니다.
@@ -77,7 +77,7 @@ Payment Request API는 새로운 결제 방법이 아닌 프로세스 계층에 
 출처: [How the Payment Request Process Works](https://developers.google.com/web/fundamentals/payments/basics/how-payment-ecosystem-works#how_the_payment_request_process_works)
 
 (1) 구매자가 판매자의 웹사이트에 방문해 상품을 선택하고 구매를 시작합니다.  
-(2) 판매자는 구매자에게 결제 정보(금액, 가능한 결제 방식 등)와 입력 양식(결제 수단, 배송 주소, 연락처 등)을 Payment Request API를 통해 제공합니다.
+(2) 판매자는 구매자에게 결제 정보(금액, 가능한 결제 방식 등)와 입력 양식(결제 수단, 배송 주소, 연락처 등)을 Payment Request API를 통해 제공합니다.  
 (3) 구매자는 결제 방식을 선택합니다. 일반 신용 카드 또는 Pay 앱이 될 수 있습니다. 각 결제 방식은 [Payment Handler API](https://www.w3.org/TR/payment-handler/)라는 표준을 따릅니다.  
 (4) 판매자는 구매자의 결제 정보를 전달 받아 PSP(Payment Service Provider)를 통해 검증합니다.  
 (5) PSP는 결제를 진행하고, 처리 결과를 판매자 웹사이트에 전달합니다.  
@@ -100,7 +100,7 @@ Payment Request API는 결제 프로세스의 (1), (2), (6) 단계를 담당합�
 ```js
 const request = new PaymentRequest(
   paymentMethods, // 결제 방식
-  paymendDetails, // 결제 금액
+  paymendDetails, // 결제 금액, 배송 옵션
   paymentOptions, // 추가 고객 정보 (배송 여부, 이메일, 휴대폰, 성명 등)
 );
 ```
@@ -170,7 +170,7 @@ try {
   // 결제 프로세스의 (4), (5) 항목. 구매 정보를 PSP로 전송 및 검증
   const result = await verifyWithServer(paymentResponse);
   
-  paymentResponse.complete(result ? 'success': 'fail');
+  paymentResponse.complete(result.success ? 'success': 'fail');
 
   // 검증 간에 제공되는 브라우저 UI를 닫고 자체 플로우 처리를 하려면 파라미터를 빈 값으로 호출한다.
   // paymentResponse.complete();
@@ -209,7 +209,7 @@ const paymentDetails = {
     {
       id: 'same-day',
       label: '당일 배송',
-      amount: { currency: 'KRW', value: '2500' },
+      amount: { currency: 'KRW', value: 2500 },
     },
   ],
 }
@@ -246,6 +246,8 @@ request.addEventListener('shippingoptionchange', event => {
 });
 ```
 
+변경된 주소, 배송 옵션에 대해 서버 검증이 필요할 경우 `event.updateWith`에 객체 대신 Promise를 넘겨줄 수 있습니다.
+
 
 ### Payment Options
 
@@ -265,12 +267,14 @@ const paymentOptions = {
 
 - 환불
 Payment Request API 명세에서 환불 프로세스는 지원하지 않습니다. 따라서 `paymentRequest` 인스턴스 생성 시 전달하는 `paymentDetails` 항목 중 [전체 금액(total)은 0 미만이 될 수 없습니다](https://www.w3.org/TR/payment-request/#dom-paymentdetailsinit). 이 경우 에러를 전달 받게 됩니다.
-음수 값 지원에 관한 스펙 논의는 [이 이슈](https://github.com/w3c/payment-request/issues/119)를 참고하세요.
+음수 값 지원에 관한 명세 논의는 [이 이슈](https://github.com/w3c/payment-request/issues/119)를 참고하세요.
 
 
 - 요금 정합성 검증
 총 요금(total)과 세부 내역(displayItems) 간의 [정합성 검증은 개발자의 역할](https://www.w3.org/TR/payment-request/#paymentdetailsbase-dictionary)입니다. 
 
+- 다수의 상세 금액 항목
+브라우저 기본 UI에서 상세 금액 목록(`displayItem`) 개수가 많을 때 [스크롤이 지원되지 않습니다](https://developers.google.com/web/fundamentals/payments/merchant-guide/deep-dive-into-payment-request#transaction_details_display_items). 따라서 소계(subtotal), 할인 정보, 배송비, 부가세 정도로 요약하는 것이 좋습니다.
 
 
 
@@ -287,57 +291,59 @@ Payment Handler API는 설치된 service worker를 통해 구매 요청 이벤�
 
 서버가 Payment Handler로 동작하려면 아래의 몇가지 설정이 필요합니다.
 
-1. 원하는 URL based payment method 경로로 `HEAD` 요청을 하면 Link 헤더로 payment-manifest 파일의 위치를 알려줘야 합니다.
+1. 원하는 URL based payment method 경로로 `GET` 또는 `HEAD` 요청을 하면 Link 헤더로 [payment method manifest](https://w3c.github.io/payment-method-manifest/) 파일의 위치를 알려줘야 합니다.
   ```
     HTTP/1.1 204 No Content
-    link: <https://web-payments-playground.now.sh/p/payment_method_manifest.json>; rel="payment-method-manifest"
+    Link: <https://web-payments-playground.now.sh/p/payment_method_manifest.json>; rel="payment-method-manifest"
   ```
-2. payment-manifest 파일에는 결제 앱 URL과 필요할 경우 origin 제한을 정의할 수 있습니다.
+2. Payment method manifest 파일에는 결제 앱 호스팅되고 있는 web app manifest URL과 payment method를 사용할 수 있는 서드파티 목록을 정의할 수 있습니다.
   ```
     {
       "default_applications": ["https://web-payments-playground.now.sh/p/web_manifest.json"],
       "supported_origins": ["https://web-payments-playground.now.sh"]
     }
   ```
-3. `default_applications`으로 정의된 manifest 파일을 통해 앱 이름, 아이콘, service worker 등의 정보를 [web app manifest](https://developer.mozilla.org/en-US/docs/Web/Manifest) 형태로 제공합니다. 결제 앱은 [PWA(Progressive Web App)[https://developers.google.com/web/progressive-web-apps]과 유사한 방식으로 동작합니다.
+3. `default_applications`으로 정의된 manifest 파일을 통해 앱 이름, 아이콘, service worker 등의 정보를 [web app manifest](https://developer.mozilla.org/en-US/docs/Web/Manifest) 형태로 제공합니다. 결제 앱은 [PWA(Progressive Web App)](https://developers.google.com/web/progressive-web-apps)과 유사한 방식으로 동작합니다.
 
-4. Service worker 설치를 위한 스크립트를 추가합니다.
+4. Service worker 설치를 위한 스크립트를 추가합니다.  
 https://developers.google.com/web/fundamentals/payments/payment-apps-developer-guide/web-payment-apps
 
-5. 결제 요청을 받아 결제 앱 UI를 제공할 수 있도록 service worker 스크립트를 작성합니다.
+5. 결제 요청을 받아 결제 앱 UI를 제공할 수 있도록 service worker 스크립트를 작성합니다.  
 https://developers.google.com/web/fundamentals/payments/payment-apps-developer-guide/web-payment-apps#write_a_service_worker
 
-6. Service worker와 상호 작용하기 위한 웹페이지 단의 스크립트를 작성합니다.
+6. Service worker와 상호 작용하기 위한 웹페이지 단의 스크립트를 작성합니다.  
 https://developers.google.com/web/fundamentals/payments/payment-apps-developer-guide/web-payment-apps#write_frontend_code
 
-이러한 과정을 통해 [직접 결제 앱](#developing-my-own-payment-app)을 만들 수 있습니다. 
+이러한 과정을 통해 [결제 앱](#developing-my-own-payment-app)을 직접 만들 수 있습니다. 
 
 
 
 # 사용 사례
 
-Payment method는 크게 두가지 형태로 나뉘며 [PMIs(Payment method identifiers)](https://www.w3.org/TR/payment-method-id/) 스펙을 따릅니다.
+Payment method는 크게 두가지 형태로 나뉘며 [PMIs(Payment method identifiers)](htps://www.w3.org/TR/payment-method-id/) 명세를 따릅니다.
 
-1. Standardized
-W3C에서 표준으로 정한 결제 방식입니다. 현재는 [`basic-card`](https://www.w3.org/TR/payment-method-basic-card/) 방식이 지원되고 있습니다.
+1. Standardized: W3C에서 표준으로 정한 결제 방식입니다. 현재는 [`basic-card`](https://www.w3.org/TR/payment-method-basic-card/) 방식이 지원되고 있습니다.
 
 
-2. URL-based
-HTTPS 기반의 URL로 정의되며, 누구나 결제 앱을 개발하고 Payment Request API를 통해 제공할 수 있도록 생태계를 확장하는 역할을 합니다.
+2. URL-based: HTTPS 기반의 URL로 정의되며, 누구나 결제 앱을 개발하고 Payment Request API를 통해 제공할 수 있도록 생태계를 확장하는 역할을 합니다.
 
 
 
 아래의 서비스는 URL-based payment method로 정의된 항목입니다.
 
-## [Google Pay](https://developers.google.com/pay/api/web/overview)
+## Google Pay
+https://developers.google.com/pay/api/web/overview
 
-## [Apple Pay](https://developer.apple.com/documentation/apple_pay_on_the_web) 
+## Apple Pay 
+https://developer.apple.com/documentation/apple_pay_on_the_web
 
-## [Samsung Pay](https://developer.samsung.com/internet/android/web-payments-integration-guide.html)
+## Samsung Pay
+https://developer.samsung.com/internet/android/web-payments-integration-guide.html
 
-## [BobPay (Sample Payment App)](https://bobpay.xyz/)
+## BobPay (Sample Payment App)
+https://bobpay.xyz/
 
-직접 결제 앱을 만들 때 참고할 수 있는 레퍼런스 앱입니다. 사이트를 방문해 앱을 설치한 뒤 아래와 같이 payment method를 정의하면 해당 앱과의 결제 프로세스를 체험할 수 있습니다.
+직접 결제 앱을 만들 때 참고할 수 있는 레퍼런스 앱입니다. 사이트를 방문해 앱을 설치한 뒤 아래와 같이 payment method를 정의하면 해당 앱의 결제 프로세스를 체험할 수 있습니다.
 
 ```js
 const paymentMethods = [
@@ -350,7 +356,10 @@ const paymentMethods = [
 
 
 
-## [Developing My Own Payment App](https://developers.google.com/web/fundamentals/payments/payment-apps-developer-guide/web-payment-apps)
+## Developing My Own Payment App
+https://developers.google.com/web/fundamentals/payments/payment-apps-developer-guide/web-payment-apps
+
+Web Payments 기반의 결제 앱을 직접 개발할 수 있습니다. (구현하면서 내용 업데이트 예정)
 
 
 
@@ -359,20 +368,22 @@ const paymentMethods = [
 # 더 알아보기
 
 ## Autofill
-- https://developers.google.com/web/updates/2015/06/checkout-faster-with-autofill
+- 결제 양식 입력의 불편함을 해소하기 위한 input `name`, `autocomplete` 속성의 명세입니다.
+- 가이드 문서: https://developers.google.com/web/updates/2015/06/checkout-faster-with-autofill
 
 
 ## UX Considerations
 - https://developers.google.com/web/fundamentals/payments/merchant-guide/payment-request-ux-considerations
 
+
 ## 안드로이드 결제 앱 개발 가이드
 - 현재 Payment Request API를 활용한 네이티브 앱 개발은 안드로이드에서 지원됩니다.
 - 가이드 문서: https://developers.google.com/web/fundamentals/payments/payment-apps-developer-guide/android-payment-apps
 
+
 ## 보완 도구
 
-- Shim
-Payment Request API 표준의 호환성을 위해 아래 링크의 shim을 적용하는게 좋습니다.
+- Payment Request API 표준의 호환성을 위해 아래 링크의 shim을 적용하는게 좋습니다.
 https://developers.google.com/web/fundamentals/payments#payment_request_api_%EC%8B%AC_%EB%A1%9C%EB%93%9C
 - Apply Pay를 지원해야 할 경우 아래 링크의 Payment Request Wrapper를 활용할 수 있습니다.
 https://github.com/GoogleChromeLabs/appr-wrapper
