@@ -71,7 +71,7 @@ Payment Request API는 새로운 결제 방법이 아닌 프로세스 계층에 
 
 # 결제 프로세스 동작 방식
 
-프로세스 동작을 이해하기 위해 [Web Payments의 구성 요소](https://developers.google.com/web/fundamentals/payments/basics/how-payment-ecosystem-works#the_anatomy_of_web_payments)를 먼저 살펴보시면 더 도움이 됩니다.
+프로세스 동작을 이해하기 위해 [Web Payments의 구성 요소](https://developers.google.com/web/fundamentals/payments/basics/how-payment-ecosystem-works#how_the_payment_request_process_works)를 먼저 살펴보시면 더 도움이 됩니다.
 
 ![Payment Request API 기반의 결제 프로세스](https://developers.google.com/web/fundamentals/payments/images/payment-ecosystem/payment-interactions.png)  
 출처: [How the Payment Request Process Works](https://developers.google.com/web/fundamentals/payments/basics/how-payment-ecosystem-works#how_the_payment_request_process_works)

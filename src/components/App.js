@@ -127,7 +127,7 @@ export default function App() {
       displayItems,
       total:  {
         label: 'Total',
-        amount: { currency: 'KRW', value : computeTotalPrice() + computeDiscountPrice() },
+        amount: { currency: 'KRW', value: computeTotalPrice() + computeDiscountPrice() },
       },
       shippingOptions: [
         {
@@ -146,11 +146,11 @@ export default function App() {
 
   function makePaymentRequest() {
     const methodData = [
-      // myOwnPaymentMethod,
+      myOwnPaymentMethod,
       // bobPayPaymentMethod,
-      googlePayPaymentMethod,
-      applePayPaymentMethod,
-      basicCardPaymentMethod,
+      // googlePayPaymentMethod,
+      // applePayPaymentMethod,
+      // basicCardPaymentMethod,
     ];
     const details = makePaymentDetails();
     const options = {
