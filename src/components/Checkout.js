@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 export default function Checkout() {
   const [client, setClient] = useState();
+  const [data, setData] = useState();
 
   useEffect(() => {
     if (!navigator.serviceWorker) {
@@ -10,6 +11,7 @@ export default function Checkout() {
 
     function handleMessageEvent(event) {
       setClient(event.source);
+      setData(event.data);
     }
 
     navigator.serviceWorker.addEventListener('message', handleMessageEvent);
@@ -24,7 +26,7 @@ export default function Checkout() {
     if (!client) {
       return;
     }
-    
+
     const response = {
       methodName: 'https://web-payments-playground.now.sh/api/pay',
       details: { id: '123456' }
@@ -50,8 +52,8 @@ export default function Checkout() {
         <h1>Sanghyeon Pay</h1>
       </header>
       <section>
-        {client && (
-          <h2>Total: {client.total}</h2>
+        {data?.total && (
+          <h2>Total: {data.total.toLocaleString()} 원</h2>
         )}
       </section>
       <footer>

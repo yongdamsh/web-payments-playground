@@ -6,6 +6,10 @@ const checkoutURL = `${origin}/checkout`;
 let resolver;
 let paymentRequestEvent;
 
+self.addEventListener('canmakepayment', e => {
+  e.respondWith(true);
+});
+
 self.addEventListener('paymentrequest', e => {
   // Preserve the event for future use
   paymentRequestEvent = e;
