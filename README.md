@@ -73,7 +73,7 @@ Payment Request API는 새로운 결제 방법이 아닌 프로세스 계층에 
 
 프로세스 동작을 이해하기 위해 [Web Payments의 구성 요소](https://developers.google.com/web/fundamentals/payments/basics/how-payment-ecosystem-works#the_anatomy_of_web_payments)를 먼저 살펴보시면 더 도움이 됩니다.
 
-![Payment Request API 기반의 결제 프로세스](https://developers.google.com/web/fundamentals/payments/images/payment-ecosystem/payment-interactions.png)
+![Payment Request API 기반의 결제 프로세스](https://developers.google.com/web/fundamentals/payments/images/payment-ecosystem/payment-interactions.png)  
 출처: [How the Payment Request Process Works](https://developers.google.com/web/fundamentals/payments/basics/how-payment-ecosystem-works#how_the_payment_request_process_works)
 
 (1) 구매자가 판매자의 웹사이트에 방문해 상품을 선택하고 구매를 시작합니다.  
@@ -276,12 +276,14 @@ Payment Request API 명세에서 환불 프로세스는 지원하지 않습니�
 
 ## [Payment Handler API](https://www.w3.org/TR/payment-handler/)
 
-결제 프로세스의 (3) 항목에 해당됩니다.
+Payment Handler API는 웹사이트가 결제 처리 역할을 할 수 있도록 하는 새로운 표준입니다. [결제 프로세스](#%EA%B2%B0%EC%A0%9C-%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4-%EB%8F%99%EC%9E%91-%EB%B0%A9%EC%8B%9D)의 (3) 항목에 해당됩니다.
 
-- https://developers.google.com/web/updates/2018/06/payment-handler-api
-- https://developers.google.com/web/fundamentals/payments/payment-apps-developer-guide/web-payment-apps
-- https://www.w3.org/TR/payment-handler/
+이 과정을 좀 더 상세히 그리면 아래와 같습니다.
 
+![flow_diagram](https://developers.google.com/web/fundamentals/payments/images/web-payment-apps/payment-handler-flow.png)  
+출처: [Web based payment apps developer guide](https://developers.google.com/web/fundamentals/payments/payment-apps-developer-guide/web-payment-apps)
+
+Payment Handler API는 설치된 service worker를 통해 구매 요청 이벤트(`paymentrequest`)를 받아 결제 앱 UI를 제공합니다.
 
 
 
@@ -322,9 +324,10 @@ const paymentMethods = [
 
 
 ## [Developing My Own Payment App](https://developers.google.com/web/fundamentals/payments/payment-apps-developer-guide/web-payment-apps)
-- 자체 결제 서비스 구현 과정을 설명하자
 
-
+자체 결제 서비스 구현 과정을 설명하자.
+  - 상현 페이 데모 준비
+    - Payment handler API에 맞춰 service worker 이벤트 등록 (bobpay 참고)
 
 
 
@@ -338,8 +341,8 @@ const paymentMethods = [
 - https://developers.google.com/web/fundamentals/payments/merchant-guide/payment-request-ux-considerations
 
 ## 안드로이드 결제 앱 개발 가이드
-- 네이티브 앱 개발 시 참고
-- https://developers.google.com/web/fundamentals/payments/payment-apps-developer-guide/android-payment-apps
+- 현재 Payment Request API를 활용한 네이티브 앱 개발은 안드로이드에서 지원됩니다.
+- 가이드 문서: https://developers.google.com/web/fundamentals/payments/payment-apps-developer-guide/android-payment-apps
 
 ## 보완 도구
 
@@ -348,6 +351,7 @@ Payment Request API 표준의 호환성을 위해 아래 링크의 shim을 적�
 https://developers.google.com/web/fundamentals/payments#payment_request_api_%EC%8B%AC_%EB%A1%9C%EB%93%9C
 - Apply Pay를 지원해야 할 경우 아래 링크의 Payment Request Wrapper를 활용할 수 있습니다.
 https://github.com/GoogleChromeLabs/appr-wrapper
+
 
 
 # 참고 자료
@@ -361,3 +365,6 @@ https://github.com/GoogleChromeLabs/appr-wrapper
   - Payment Method Manifest: https://www.w3.org/TR/payment-method-manifest/
 - GitHub Repo: https://github.com/w3c/payment-request
 - MDN Payment Request API: https://developer.mozilla.org/en-US/docs/Web/API/Payment_Request_API
+- The Evolution of Payment Apps
+  - https://www.w3.org/blog/wpwg/2020/05/18/the-evolution-of-payment-apps-i-of-ii/
+  - https://www.w3.org/blog/wpwg/2020/05/18/the-evolution-of-payment-apps-ii-of-ii/

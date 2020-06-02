@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 
 const items = [
-  { id: 1, name: 'Item 1', price: 1000 },
-  { id: 2, name: 'Item 2', price: 2000 },
-  { id: 3, name: 'Item 3', price: 3000 },
+  { id: 1, name: '삼다수 2L × 6개', price: 4900 },
+  { id: 2, name: '에어팟 프로', price: 300000 },
+  { id: 3, name: '아이패드 프로', price: 1500000 },
 ];
 
 const basicCardPaymentMethod = {
@@ -54,6 +54,7 @@ const bobPayPaymentMethod = {
 export default function App() {
   const [selectedItemMap, setSelectedItemMap] = useState({});
   const [receipt, setReceipt] = useState();
+  const [discountChecked, setDiscountChecked] = useState(false);
   const selectedItems = items.filter(item => selectedItemMap[item.id]);
 
   function handleSelectedItemChange(itemId) {
@@ -68,6 +69,10 @@ export default function App() {
     return selectedItems.reduce((total, item) => total + item.price, 0);
   }
 
+  function computeDiscountPrice() {
+    return discountChecked ? (computeTotalPrice() * -0.1) : 0;
+  }
+
   async function handlePaymentClick() {
     if (!window.PaymentRequest) {
       window.alert('This browser does not support Payment Request API');
@@ -75,24 +80,8 @@ export default function App() {
 
     const paymentRequest = makePaymentRequest();
 
-    paymentRequest.addEventListener('shippingaddresschange', event => {
-      // event.updateWith();
-    });
-
-    paymentRequest.addEventListener('shippingoptionchange', event => {
-      // event.updateWith();
-    });
-
     try {
-      // TODO: 각 payment method가 지원되는지 확인하는 방식으로 수정하자
-      // const canPay = await paymentRequest.canMakePayment();
-
-      // if (!canPay) {
-      //   throw new Error('cannot pay');
-      // }
-
       const paymentResponse = await paymentRequest.show();
-      console.log('paymentResponse', paymentResponse);
 
       try {
         const apiResponse = await fetch('/api/pay', {
@@ -103,11 +92,14 @@ export default function App() {
           },
           body: JSON.stringify(paymentResponse.toJSON())
         });
-        const paymentResult = apiResponse.json();
-  
-        await paymentResponse.complete(paymentResult.success ? 'sucess' : 'fail');
+        const paymentResult = await apiResponse.json();
 
-        setReceipt(paymentResponse);
+        if (paymentResult.success) {
+          await paymentResponse.complete('success');
+          setReceipt(paymentResponse);
+        } else {
+          await paymentResponse.complete('fail');
+        }
       } catch (error) {
         console.error(error);
         paymentResponse.complete('fail');
@@ -119,23 +111,34 @@ export default function App() {
   }
 
   function makePaymentDetails() {
+    const displayItems = selectedItems.map(item => ({
+      label: item.name,
+      amount: { currency: 'KRW', value : item.price },
+    }));
+
+    if (discountChecked) {
+      displayItems.push({
+        label: '쿠폰 할인 (10%)',
+        amount: { currency: 'KRW', value : computeDiscountPrice() },
+      });
+    }
+
     return {
-      displayItems: selectedItems.map(item => ({
-        label: item.name,
-        amount: { currency: 'KRW', value : item.price },
-      })),
+      displayItems,
       total:  {
         label: 'Total',
-        amount: { currency: 'KRW', value : computeTotalPrice() },
+        amount: { currency: 'KRW', value : computeTotalPrice() + computeDiscountPrice() },
       },
       shippingOptions: [
         {
           id: 'economy',
-          label: 'Economy Shipping (5-7 Days)',
-          amount: {
-            currency: 'USD',
-            value: '0',
-          },
+          label: '일반 배송 (2 ~ 3일)',
+          amount: { currency: 'KRW', value: 0 },
+        },
+        {
+          id: 'same-day',
+          label: '당일 배송',
+          amount: { currency: 'KRW', value: 2500 },
         },
       ],
     };
@@ -143,10 +146,10 @@ export default function App() {
 
   function makePaymentRequest() {
     const methodData = [
-      bobPayPaymentMethod,
-      myOwnPaymentMethod,
-      googlePayPaymentMethod,
-      applePayPaymentMethod,
+      // bobPayPaymentMethod,
+      // myOwnPaymentMethod,
+      // googlePayPaymentMethod,
+      // applePayPaymentMethod,
       basicCardPaymentMethod,
     ];
     const details = makePaymentDetails();
@@ -170,18 +173,33 @@ export default function App() {
 
     request.addEventListener('shippingoptionchange', event => {
       const { shippingOption } = event.target;
+      const details = makePaymentDetails();
       const shipppingOptionsWithSelected = details.shippingOptions.map(option => ({
         ...option,
         selected: option.id === shippingOption,
       }));
+      const selectedShippingOption = shipppingOptionsWithSelected.find(option => option.selected);
+      let total = { ...details.total };
+      let displayItems = [...details.displayItems];
+
+      total.amount.value += selectedShippingOption.amount.value;
+      displayItems.push({
+        label: selectedShippingOption.label,
+        amount: selectedShippingOption.amount,
+      });
 
       event.updateWith({
-        ...details,
+        total,
+        displayItems,
         shippingOptions: shipppingOptionsWithSelected,
       });
     });
   
     return request;
+  }
+
+  function handleDiscount(event) {
+    setDiscountChecked(event.target.checked);
   }
 
   useEffect(() => {
@@ -198,7 +216,7 @@ export default function App() {
             <li key={item.id} className="item">
               <h3>{item.name}</h3>
               <div className="item-option">
-                <p className="item-price"><strong>{item.price} 원</strong></p>
+                <p className="item-price"><strong>{item.price.toLocaleString()} 원</strong></p>
                 <label>
                   <input type="checkbox" value={selectedItems[item.id] || false} onChange={handleSelectedItemChange.bind(this, item.id)} /> 선택
                 </label>
@@ -214,11 +232,16 @@ export default function App() {
       <section id="payment" className="payment page">
         <ul>
           {selectedItems.map(item => (
-            <li key={item.id}>{item.name} ({item.price} 원)</li>
+            <li key={item.id} className="item">
+              <h3>{item.name}</h3> 
+              <div className="item-option">{item.price.toLocaleString()} 원</div>
+            </li>
           ))}
         </ul>
-        <label><input type="checkbox" /> 10% 할인 쿠폰 적용</label>
-        <h3>총 {computeTotalPrice()} 원</h3>
+        <label className="coupon"><input type="checkbox" value={discountChecked} onChange={handleDiscount} /> 10% 할인 쿠폰 적용</label>
+        <h3 className="total-price">
+          총 {(computeTotalPrice() + computeDiscountPrice()).toLocaleString()} 원
+        </h3>
         
         <div className="navigation">
           <button onClick={handlePaymentClick}>결제하기</button>
@@ -227,9 +250,9 @@ export default function App() {
       </section>
 
       <section id="receipt" className="receipt page">
-
+        <h3>결제가 완료되었습니다.</h3>
+        <pre>{JSON.stringify(receipt, null, 2)}</pre>
       </section>
-
 
       <style jsx>{`
         .container {
@@ -270,6 +293,15 @@ export default function App() {
           margin: 0 10px;
           font-size: 24px;
           text-align: center;
+        }
+
+        .payment {
+          text-align: right;
+        }
+
+        .coupon, .total-price {
+          margin-top: 10px;
+          padding-right: 20px;
         }
       `}</style>
     </div>
