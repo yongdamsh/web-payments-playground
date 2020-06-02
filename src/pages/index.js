@@ -1,8 +1,37 @@
 import Head from 'next/head'
 
 import App from '@/components/App'
+import { useEffect } from 'react'
 
 export default function Home() {
+  useEffect(() => {
+    async function registerServiceWorker() {
+      if ('serviceWorker' in navigator) {
+        // Register a service worker
+        const registration = await navigator.serviceWorker.register(
+          'service-worker.js'
+        );
+        // Check if Payment Handler is available
+        if (!registration.paymentManager) {
+          return;
+        }
+      
+        registration.paymentManager.userHint = 'Made by Sanghyeon Lee';
+        registration.paymentManager.instruments.set(
+          // Payment instrument key can be any string.
+          'sanghyeonpay-payment-method',
+          // Payment instrument detail
+          {
+            name: 'Sanghyeon Pay',
+            method: 'https://web-payments-playground.now.sh/api/pay',
+          }
+        )
+      }
+    }
+
+    registerServiceWorker();
+  }, []);
+
   return (
     <div>
       <Head>
