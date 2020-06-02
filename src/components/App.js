@@ -146,10 +146,10 @@ export default function App() {
 
   function makePaymentRequest() {
     const methodData = [
-      // bobPayPaymentMethod,
       // myOwnPaymentMethod,
-      // googlePayPaymentMethod,
-      // applePayPaymentMethod,
+      // bobPayPaymentMethod,
+      googlePayPaymentMethod,
+      applePayPaymentMethod,
       basicCardPaymentMethod,
     ];
     const details = makePaymentDetails();
