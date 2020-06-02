@@ -7,6 +7,7 @@ const items = [
 ];
 
 const basicCardPaymentMethod = {
+  label: '카드 결제',
   supportedMethods: 'basic-card',
   data: {
     supportedNetworks: ['visa', 'mastercard', 'amex'],
@@ -14,6 +15,7 @@ const basicCardPaymentMethod = {
   },
 };
 const googlePayPaymentMethod = {
+  label: 'Google Pay',
   supportedMethods: 'https://google.com/pay',
   data: {
     environment: 'TEST',
@@ -35,6 +37,7 @@ const googlePayPaymentMethod = {
   },
 };
 const applePayPaymentMethod = {
+  label: 'Apple Pay',
   supportedMethods: 'https://apple.com/apple-pay',
   data: {
     version: 3,
@@ -45,16 +48,27 @@ const applePayPaymentMethod = {
   },
 };
 const myOwnPaymentMethod = {
+  label: 'Sanghyeon Pay',
   supportedMethods: 'https://web-payments-playground.now.sh/api/pay',
 };
 const bobPayPaymentMethod = {
+  label: 'Bob Pay',
   supportedMethods: 'https://bobpay.xyz/pay',
 };
+const allPaymentMethods = [
+  myOwnPaymentMethod,
+  bobPayPaymentMethod,
+  googlePayPaymentMethod,
+  applePayPaymentMethod,
+  basicCardPaymentMethod,
+];
 
 export default function App() {
   const [selectedItemMap, setSelectedItemMap] = useState({});
   const [receipt, setReceipt] = useState(null);
   const [discountChecked, setDiscountChecked] = useState(false);
+  const [paymentMethods, setPaymentMethods] = useState(allPaymentMethods);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const selectedItems = items.filter(item => selectedItemMap[item.id]);
 
   function handleSelectedItemChange(itemId) {
@@ -145,13 +159,6 @@ export default function App() {
   }
 
   function makePaymentRequest() {
-    const methodData = [
-      myOwnPaymentMethod,
-      // bobPayPaymentMethod,
-      // googlePayPaymentMethod,
-      // applePayPaymentMethod,
-      // basicCardPaymentMethod,
-    ];
     const details = makePaymentDetails();
     const options = {
       requestShipping: true,
@@ -160,7 +167,7 @@ export default function App() {
       requestPayerName: true,
     };
     const request = new PaymentRequest(
-      methodData,
+      paymentMethods.filter(method => method.supportedMethods === selectedPaymentMethod),
       details,
       options
     );
@@ -202,6 +209,44 @@ export default function App() {
     setDiscountChecked(event.target.checked);
   }
 
+  function handlePaymentMethodChange(event) {
+    setSelectedPaymentMethod(event.target.value);
+  }
+
+  useEffect(() => {
+    async function filterAvailableMethods() {
+      const filteredPaymentMethods = [];
+      const detailPlaceholder = {
+        total: {
+          label: 'total',
+          amount: { currency: 'KRW', value: 0 }
+        },
+      };
+
+      for (let method of paymentMethods) {
+        let request = new PaymentRequest([method], detailPlaceholder);
+
+        try {
+          const canMake = await request.canMakePayment();
+
+          if (canMake) {
+            filteredPaymentMethods.push(method);
+          } else {
+            console.log(method.label, ' is not supported');
+          }
+        } catch (error) {
+          console.log(method.label, ' is not supported: ', error);
+        } finally {
+          request = null;
+        }
+      }
+
+      setPaymentMethods(filteredPaymentMethods);
+    }
+
+    filterAvailableMethods();
+  }, []);
+
   useEffect(() => {
     if (receipt) {
       window.location = '#receipt';
@@ -242,6 +287,26 @@ export default function App() {
         <h3 className="total-price">
           총 {(computeTotalPrice() + computeDiscountPrice()).toLocaleString()} 원
         </h3>
+
+        <section className="methods">
+          <fieldset>
+            <legend>결제 방식</legend>
+            <form>
+              {paymentMethods.map(method => (
+                <label key={method.label}>
+                  <input 
+                    type="radio"
+                    checked={method.supportedMethods === selectedPaymentMethod} 
+                    name="payment-method"
+                    value={method.supportedMethods}
+                    onChange={handlePaymentMethodChange} 
+                  /> 
+                  {method.label}
+                </label>
+              ))}
+            </form>
+          </fieldset>
+        </section>
         
         <div className="navigation">
           <button onClick={handlePaymentClick}>결제하기</button>
@@ -306,6 +371,19 @@ export default function App() {
         .coupon, .total-price {
           margin-top: 10px;
           padding-right: 20px;
+        }
+
+        .methods {
+          text-align: left;
+        }
+
+        .methods label {
+          display: block;
+          margin-bottom: 10px;
+        }
+
+        .methods input[type="radio"] {
+          margin-right: 10px;
         }
       `}</style>
     </div>
