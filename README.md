@@ -285,6 +285,33 @@ Payment Handler API는 웹사이트가 결제 처리 역할을 할 수 있도록
 
 Payment Handler API는 설치된 service worker를 통해 구매 요청 이벤트(`paymentrequest`)를 받아 결제 앱 UI를 제공합니다.
 
+서버가 Payment Handler로 동작하려면 아래의 몇가지 설정이 필요합니다.
+
+1. 원하는 URL based payment method 경로로 `HEAD` 요청을 하면 Link 헤더로 payment-manifest 파일의 위치를 알려줘야 합니다.
+  ```
+    HTTP/1.1 204 No Content
+    link: <https://web-payments-playground.now.sh/p/payment_method_manifest.json>; rel="payment-method-manifest"
+  ```
+2. payment-manifest 파일에는 결제 앱 URL과 필요할 경우 origin 제한을 정의할 수 있습니다.
+  ```
+    {
+      "default_applications": ["https://web-payments-playground.now.sh/p/web_manifest.json"],
+      "supported_origins": ["https://web-payments-playground.now.sh"]
+    }
+  ```
+3. `default_applications`으로 정의된 manifest 파일을 통해 앱 이름, 아이콘, service worker 등의 정보를 [web app manifest](https://developer.mozilla.org/en-US/docs/Web/Manifest) 형태로 제공합니다. 결제 앱은 [PWA(Progressive Web App)[https://developers.google.com/web/progressive-web-apps]과 유사한 방식으로 동작합니다.
+
+4. Service worker 설치를 위한 스크립트를 추가합니다.
+https://developers.google.com/web/fundamentals/payments/payment-apps-developer-guide/web-payment-apps
+
+5. 결제 요청을 받아 결제 앱 UI를 제공할 수 있도록 service worker 스크립트를 작성합니다.
+https://developers.google.com/web/fundamentals/payments/payment-apps-developer-guide/web-payment-apps#write_a_service_worker
+
+6. Service worker와 상호 작용하기 위한 웹페이지 단의 스크립트를 작성합니다.
+https://developers.google.com/web/fundamentals/payments/payment-apps-developer-guide/web-payment-apps#write_frontend_code
+
+이러한 과정을 통해 [직접 결제 앱](#developing-my-own-payment-app)을 만들 수 있습니다. 
+
 
 
 # 사용 사례
@@ -325,9 +352,7 @@ const paymentMethods = [
 
 ## [Developing My Own Payment App](https://developers.google.com/web/fundamentals/payments/payment-apps-developer-guide/web-payment-apps)
 
-자체 결제 서비스 구현 과정을 설명하자.
-  - 상현 페이 데모 준비
-    - Payment handler API에 맞춰 service worker 이벤트 등록 (bobpay 참고)
+
 
 
 
