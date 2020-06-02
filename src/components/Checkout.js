@@ -51,11 +51,14 @@ export default function Checkout() {
       <header>
         <h1>Sanghyeon Pay</h1>
       </header>
-      <section>
-        {data?.total && (
-          <h2>Total: {data.total.amount.value.toLocaleString()} 원</h2>
-        )}
-      </section>
+      
+      {data?.total && (
+        <section>
+          <h2>Total:</h2>
+          <pre>{JSON.stringify(data.total)}</pre>
+        </section>
+      )}
+      
       <footer>
         <button onClick={onCancel}>취소</button>
         <button onClick={onPay}>결제</button>
