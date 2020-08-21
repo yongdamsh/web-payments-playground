@@ -55,7 +55,7 @@ const bobPayPaymentMethod = {
   label: 'Bob Pay',
   supportedMethods: 'https://bobpay.xyz/pay',
 };
-const allPaymentMethods = [
+const paymentMethods = [
   myOwnPaymentMethod,
   bobPayPaymentMethod,
   googlePayPaymentMethod,
@@ -67,7 +67,7 @@ export default function App() {
   const [selectedItemMap, setSelectedItemMap] = useState({});
   const [receipt, setReceipt] = useState(null);
   const [discountChecked, setDiscountChecked] = useState(false);
-  const [paymentMethods, setPaymentMethods] = useState(allPaymentMethods);
+  const [requestOptions, setRequestOptions] = useState(true);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const selectedItems = items.filter(item => selectedItemMap[item.id]);
 
@@ -160,14 +160,16 @@ export default function App() {
 
   function makePaymentRequest() {
     const details = makePaymentDetails();
-    const options = {
+    const options = requestOptions ? {
       requestShipping: true,
       requestPayerEmail: true,
       requestPayerPhone: true,
       requestPayerName: true,
-    };
+    } : {};
+    const filteredPaymentMethods =  paymentMethods.filter(method => 
+      selectedPaymentMethod === 'all' || method.supportedMethods === selectedPaymentMethod);
     const request = new PaymentRequest(
-      paymentMethods.filter(method => method.supportedMethods === selectedPaymentMethod),
+      filteredPaymentMethods,
       details,
       options
     );
@@ -213,39 +215,9 @@ export default function App() {
     setSelectedPaymentMethod(event.target.value);
   }
 
-  useEffect(() => {
-    async function filterAvailableMethods() {
-      const filteredPaymentMethods = [];
-      const detailPlaceholder = {
-        total: {
-          label: 'total',
-          amount: { currency: 'KRW', value: 0 }
-        },
-      };
-
-      for (let method of paymentMethods) {
-        let request = new PaymentRequest([method], detailPlaceholder);
-
-        try {
-          const canMake = await request.canMakePayment();
-
-          if (canMake) {
-            filteredPaymentMethods.push(method);
-          } else {
-            console.log(method.label, ' is not supported');
-          }
-        } catch (error) {
-          console.log(method.label, ' is not supported: ', error);
-        } finally {
-          request = null;
-        }
-      }
-
-      setPaymentMethods(filteredPaymentMethods);
-    }
-
-    filterAvailableMethods();
-  }, []);
+  function handleRequestOptionsChange(event) {
+    setRequestOptions(event.target.checked);
+  }
 
   useEffect(() => {
     if (receipt) {
@@ -283,7 +255,7 @@ export default function App() {
             </li>
           ))}
         </ul>
-        <label className="coupon"><input type="checkbox" value={discountChecked} onChange={handleDiscount} /> 10% 할인 쿠폰 적용</label>
+        <label className="coupon"><input type="checkbox" checked={discountChecked} onChange={handleDiscount} /> 10% 할인 쿠폰 적용</label>
         <h3 className="total-price">
           총 {(computeTotalPrice() + computeDiscountPrice()).toLocaleString()} 원
         </h3>
@@ -304,9 +276,21 @@ export default function App() {
                   {method.label}
                 </label>
               ))}
+              <label>
+                <input 
+                  type="radio"
+                  checked={selectedPaymentMethod === 'all'} 
+                  name="payment-method"
+                  value="all"
+                  onChange={handlePaymentMethodChange} 
+                /> 
+                전체 선택
+              </label>
             </form>
           </fieldset>
         </section>
+
+        <label className="request-options"><input type="checkbox" checked={requestOptions} onChange={handleRequestOptionsChange} /> 배송 옵션 및 연락처 입력</label>
         
         <div className="navigation">
           <button onClick={handlePaymentClick}>결제하기</button>
@@ -384,6 +368,12 @@ export default function App() {
 
         .methods input[type="radio"] {
           margin-right: 10px;
+        }
+
+        .request-options {
+          display: block;
+          margin-top: 10px;
+          padding-right: 20px;
         }
       `}</style>
     </div>
