@@ -13,10 +13,24 @@ export default function Home() {
         );
         // Check if Payment Handler is available
         if (!registration.paymentManager) {
+          console.log('PaymentManager API not found.');
+          return;
+        }
+
+        if (!registration.paymentManager.enableDelegations) {
+          console.log('PaymentManager does not support enableDelegations method');
           return;
         }
       
         registration.paymentManager.userHint = 'Made by Sanghyeon Lee';
+
+        registration.paymentManager.enableDelegations([
+          'shippingAddress',
+          'payerEmail',
+          'payerPhone',
+          'payerName',
+        ]);
+
         registration.paymentManager.instruments.set(
           // Payment instrument key can be any string.
           'sanghyeonpay-payment-method',
@@ -25,11 +39,13 @@ export default function Home() {
             name: 'Sanghyeon Pay',
             method: 'https://web-payments-playground.now.sh/api/pay',
           }
-        )
+        );
       }
     }
 
-    registerServiceWorker();
+    if (process.env.NODE_ENV === 'production') {
+      registerServiceWorker();
+    }
   }, []);
 
   return (
