@@ -33,7 +33,7 @@ Payment Request API를 비롯해 결제 수단을 연동하는 표준 명세와 
 - [What's New](#whats-new)
   - [Deprecation of the 'Basic Card' Method](#deprecation-of-the-basic-card-method)
   - [Skip-the-sheet](#skip-the-sheet)
-    - [Skip-the-sheet 적용 여부에 따른 UI 비교 영상](#skip-the-sheet-%EC%A0%81%EC%9A%A9-%EC%97%AC%EB%B6%80%EC%97%90-%EB%94%B0%EB%A5%B8-ui-%EB%B9%84%EA%B5%90-%EC%98%81%EC%83%81)
+    - [Skip-the-sheet 적용 여부에 따른 UX 비교 영상](#skip-the-sheet-%EC%A0%81%EC%9A%A9-%EC%97%AC%EB%B6%80%EC%97%90-%EB%94%B0%EB%A5%B8-ux-%EB%B9%84%EA%B5%90-%EC%98%81%EC%83%81)
   - [Delegation](#delegation)
   - [Just-In-Time(JIT) Installation](#just-in-timejit-installation)
 - [What's Next](#whats-next)
@@ -42,11 +42,13 @@ Payment Request API를 비롯해 결제 수단을 연동하는 표준 명세와 
     - [Credential Management API Support](#credential-management-api-support)
     - [WebOTP Support](#webotp-support)
   - [Real World Integrations](#real-world-integrations)
+    - [Digital Goods API](#digital-goods-api)
+    - [QR Codes for Multi-Device Checkout](#qr-codes-for-multi-device-checkout)
+    - [Open Banking](#open-banking)
 - [더 알아보기](#%EB%8D%94-%EC%95%8C%EC%95%84%EB%B3%B4%EA%B8%B0)
   - [Autofill](#autofill)
   - [UX Considerations](#ux-considerations)
   - [안드로이드 결제 앱 개발 가이드](#%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C-%EA%B2%B0%EC%A0%9C-%EC%95%B1-%EA%B0%9C%EB%B0%9C-%EA%B0%80%EC%9D%B4%EB%93%9C)
-  - [보완 도구](#%EB%B3%B4%EC%99%84-%EB%8F%84%EA%B5%AC)
 - [참고 자료](#%EC%B0%B8%EA%B3%A0-%EC%9E%90%EB%A3%8C)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
