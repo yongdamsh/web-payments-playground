@@ -282,20 +282,20 @@ const paymentOptions = {
   requestPayerPhone: true, // 구매자 휴대폰
   requestShipping: true, // 배송지 정보
   shippingType: 'shipping' || 'delevery' || 'pickup', // 배송 타입
-}
+};
 ```
 
 ### [미지원 항목](https://developers.google.com/web/fundamentals/payments#details-parameter)
 
-- 환불
+- 환불:  
 Payment Request API 명세에서 환불 프로세스는 지원하지 않습니다. 따라서 `paymentRequest` 인스턴스 생성 시 전달하는 `paymentDetails` 항목 중 [전체 금액(total)은 0 미만이 될 수 없습니다](https://www.w3.org/TR/payment-request/#dom-paymentdetailsinit). 이 경우 에러를 전달 받게 됩니다.
 음수 값 지원에 관한 명세 논의는 [이 이슈](https://github.com/w3c/payment-request/issues/119)를 참고하세요.
 
 
-- 요금 정합성 검증
+- 요금 정합성 검증:  
 총 요금(total)과 세부 내역(displayItems) 간의 [정합성 검증은 개발자의 역할](https://www.w3.org/TR/payment-request/#paymentdetailsbase-dictionary)입니다. 
 
-- 다수의 상세 금액 항목
+- 다수의 상세 금액 항목:    
 브라우저 기본 UI에서 상세 금액 목록(`displayItem`) 개수가 많을 때 [스크롤이 지원되지 않습니다](https://developers.google.com/web/fundamentals/payments/merchant-guide/deep-dive-into-payment-request#transaction_details_display_items). 따라서 소계(subtotal), 할인 정보, 배송비, 부가세 정도로 요약하는 것이 좋습니다.
 
 
@@ -342,7 +342,7 @@ https://developers.google.com/web/fundamentals/payments/payment-apps-developer-g
 
 # 사용 사례
 
-Payment method는 크게 두가지 형태로 나뉘며 [PMIs(Payment method identifiers)](htps://www.w3.org/TR/payment-method-id/) 명세를 따릅니다.
+Payment method는 크게 두가지 형태로 나뉘며 [PMIs(Payment method identifiers)](https://www.w3.org/TR/payment-method-id/) 명세를 따릅니다.
 
 1. Standardized: W3C에서 표준으로 정한 결제 방식입니다. 현재는 [`basic-card`](https://www.w3.org/TR/payment-method-basic-card/) 방식이 지원되고 있습니다.
 
@@ -378,7 +378,7 @@ const paymentMethods = [
 
 ## Developing My Own Payment App
 
-Web Payments 기반의 결제 앱을 직접 개발할 수 있습니다. 개발 방법은 네이티브(현재는 Android만 지원)와 웹 기반으로 구분됩니다. 여기선 웹 기반의 Web Payments 결제 앱 개발 방법을 살펴 봅니다. 네이티브 결제 앱 개발 방법은 [여기](#%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C-%EA%B2%B0%EC%A0%9C-%EC%95%B1-%EA%B0%9C%EB%B0%9C-%EA%B0%80%EC%9D%B4%EB%93%9C)를 참고하세요.
+Web Payments 기반의 결제 앱을 직접 개발할 수 있습니다. 개발 방법은 네이티브(현재는 Android만 지원)와 웹 기반으로 구분됩니다. 여기선 웹 기반의 Web Payments 결제 앱 개발 방법을 살펴 봅니다. 네이티브 결제 앱 개발 방법은 [여기](https://web.dev/android-payment-apps-developers-guide/)를 참고하세요.
 
 웹 기반 결제 앱을 개발하려면 크게 아래 세 가지 항목의 준비가 필요합니다.
 
@@ -388,10 +388,11 @@ Web Payments 기반의 결제 앱을 직접 개발할 수 있습니다. 개발 �
 
 ### Service Worker
 
-모든 웹 기반 결제 앱은 필수로 Service worker를 포함해야 합니다. Service worker는 [PWA(Progressive Web App)](https://web.dev/progressive-web-apps/)의 기술적 기반을 제공하는 이벤트 기반 스크립트이며, 브라우저의 백그라운드에서 실행됩니다. 결재 앱에서는 Service worker를 아래의 용도로 사용합니다.
+모든 웹 기반 결제 앱은 필수로 Service worker를 포함해야 합니다. Service worker는 [PWA(Progressive Web App)](https://web.dev/progressive-web-apps/)의 기술적 기반을 제공하는 이벤트 기반 스크립트이며, 브라우저의 백그라운드에서 실행됩니다. 결제 앱에서는 Service worker를 아래의 용도로 사용합니다.
 
 - 모달 창을 열어 결제 UI를 제공
-- 고객, 판매자와 결제 앱 간의 통신
+- 판매자 사이트와 결제 앱 간의 이벤트 송수신
+- 구매 정보 입력 등 고객과의 인터랙션 처리
 
 > Service worker의 동작 원리는 [Using Service Workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers) 문서에 잘 설명되어 있습니다.
 
@@ -417,7 +418,7 @@ self.addEventListener('paymentrequest', e => {
 
 ## [더 나은 UX & DX](https://web.dev/empowering-payment-apps-with-web-payments/#the-benefits-of-integrating-web-payments-in-a-payment-app)
 
-- In-context payments: 리디렉션이나 팝업 방식과 달리 모달 방식으로 제공되어 context 유지에 유리합니다. ([스크린샷](#deprecation-of-basic-card-method) 참고)
+- In-context payments: 리디렉션이나 팝업 방식과 달리 모달 방식으로 제공되어 context 유지에 유리합니다. ([스크린샷](#deprecation-of-the-basic-card-method) 참고)
 
 - Faster checkout: 브라우저나 결제 앱에 한번 저장된 결제 정보는 Web Payments를 지원하는 다른 판매 사이트에서도 활용되어 빠른 체크아웃이 가능합니다.
 
@@ -450,7 +451,7 @@ self.addEventListener('paymentrequest', e => {
 
 ## Deprecation of the 'Basic Card' Method
 
-Web Payments의 신용카드 정보를 통한 결제 방식은 두 가지 측면에서 부족합니다.
+Web Payments의 신용카드 정보를 통한 결제 방식은 두 가지 측면에서 부족한 점이 있습니다.
 
 1. 카드 정보를 입력하는 과정에서 사용자 경험이 떨어짐
 2. 카드 번호 등의 정보가 노출되어 보안에 취약함
@@ -471,13 +472,13 @@ Chrome 팀은 서드파티 앱으로의 연결성을 강화하기 위해 아래 
 
 구매자의 선택이 불필요한 상황에서는 sheet UI를 건너 뛰어 구매 경험을 향상시키기 위한 기능입니다. 아래의 조건을 모두 만족할 경우 발동됩니다.
 
-- `request.show()`(sheet UI를 열어 구매 플로우를 시작하는 메서드)가 사용자 제스처에 의해 호출되어야 한다.
+- `request.show()`(sheet UI를 열어 구매 플로우를 시작하는 메서드)가 고객의 제스처(클릭 이벤트 등)에 의해 호출되어야 한다.
 - 판매자는 하나 이상의 [URL-based 결제 방식](#%EC%82%AC%EC%9A%A9-%EC%82%AC%EB%A1%80)을 요청해야 한다.
-- 다음 항목을 충족하는 결제 방식이 한 개만 존재해야 한다.
+- 다음 항목을 충족하는 결제 방식이 **하나만 존재**해야 한다.
   - Payment Handler UI를 제공할 수 있어야 한다.
   - [구매자 정보(배송 옵션, 이름, 이메일, 휴대폰 번호)](https://w3c.github.io/payment-request/#dom-paymentoptions)를 [위임(delegation)](#delegation) 받을 수 있어야 한다.
 
-### Skip-the-sheet 적용 여부에 따른 UI 비교 영상
+### Skip-the-sheet 적용 여부에 따른 UX 비교 영상
 - https://storage.googleapis.com/web-dev-assets/payments/without-skip-the-sheet.webm
 - https://storage.googleapis.com/web-dev-assets/payments/skip-the-sheet.webm
 - 출처: [Setting up a payment method](https://web.dev/setting-up-a-payment-method/#understanding-the-special-optimizations)
@@ -522,6 +523,7 @@ async function registerServiceWorker() {
     return;
   }
 
+  // https://github.com/yongdamsh/web-payments-playground/blob/49e7cb05e10d84854ea3bfae0f38ea3cf0e8d91f/src/pages/index.js#L27-L32
   registration.paymentManager.enableDelegations([
     'shippingAddress',
     'payerName',
@@ -533,7 +535,7 @@ async function registerServiceWorker() {
 
 
 > Skip-the-sheet와 Delegation의 더 자세한 정보는 아래 링크를 참고하세요.  
-> - 명세: http://bit.ly
+> - 명세: https://bit.ly/PaymentRequestSkipTheSheet
 > - Proposal: https://github.com/sahel-sh/shipping-contact-delegation/blob/master/Explainer.md
 
 ## Just-In-Time(JIT) Installation
@@ -551,9 +553,11 @@ JIT Installation은 결제에 필요한 Service Worker가 설치 가능한 상�
 
 ## Security, Privacy, and Easy Authentication
 
+Payment Handler API를 갖춘 페이지에서 아래의 보안, 인증 관련 Web API와의 연동이 지원됩니다.
+
 ### [WebAuthn](https://w3c.github.io/webauthn/) Support
 
-WebAuthn은 브라우저에서 비밀번호 없이 인증하기 위한 Web API의 명세로 FIDO(Fast IDentity Online) 기반의 인증 메커니즘입니다. 정확히는 [FIDO 2.0](https://fidoalliance.org/specifications/)의 메인 컴포넌트 중 하나입니다. 이 명세를 통해 웹에서도 [생체 인증](https://youtu.be/ZXmKKV7R72c?t=369) 연동이 가능합니다.
+WebAuthn은 브라우저에서 비밀번호 없이 인증하기 위한 Web API의 명세로 FIDO(**F**ast **ID**entity **O**nline) 기반의 인증 메커니즘입니다. 정확히는 [FIDO 2.0](https://fidoalliance.org/specifications/)의 메인 컴포넌트 중 하나입니다. 이 명세를 통해 웹에서도 [생체 인증](https://youtu.be/ZXmKKV7R72c?t=369) 연동이 가능합니다.
 
 지난 5월 Web Payments Working Group에서 개최한 code-a-thon에서 나온 아이디어의 [데모 영상](https://www.w3.org/2020/05/entersekt_consent2.mov)을 참고하세요.
 
@@ -571,17 +575,19 @@ SMS를 통한 OTP 발송으로 사용자 휴대폰 번호를 보다 쉽게 인�
 
 ## Real World Integrations
 
-- Digital Goods API
+사용성을 높히기 위해 개발 중이거나 검토 중인 사항입니다.
+
+### Digital Goods API
 
 Web Payments와 Android의 [Trusted Web Activities](https://developers.google.com/web/android/trusted-web-activity)이란 기술을 활용해 인앱 결제를 제공하는 방안이며 아직 구현 중이라고 합니다.
 
-- QR Codes for Multi-Device Checkout
+### QR Codes for Multi-Device Checkout
 
-결제 시 QR 코드를 생성하고, 다른 기기에서 해당 QR을 스캔해 결제를 진행합니다. 데스크톱 환경에서 앱카드로 결제하는 시나리오와 유사해 보입니다. 데모 영상은 ![여기](https://www.w3.org/2020/05/entersekt_qr.mov)를 참고하세요.
+결제 시 QR 코드를 생성하고, 다른 기기에서 해당 QR을 스캔해 결제를 진행합니다. 데스크톱 환경에서 앱카드로 결제하는 시나리오와 유사해 보입니다. 데모 영상은 [여기](https://www.w3.org/2020/05/entersekt_qr.mov)를 참고하세요.
 
-- Open Banking
+### Open Banking
 
-오픈 뱅킹 flow에서 Payment Request API와 FIDO 인증을 활용할 기회를 모색 중이라고 합니다. Web Payment Working Group을 비롯한 다양한 커뮤니티에서 논의 중인 사항이 정리된 문서 [PAYMENTS AND AUTHENTICATION: DRIVING TOWARD A WHOLE GREATER THAN PARTS](https://www.w3.org/blog/2020/05/payments-and-authentication-driving-toward-a-whole-greater-than-parts/)를 참고했습니다.
+오픈 뱅킹 flow에서 Payment Request API와 FIDO 인증을 활용할 기회를 모색 중이라고 합니다. Web Payment Working Group을 비롯한 다양한 커뮤니티에서 논의 중인 사항이 정리된 문서([PAYMENTS AND AUTHENTICATION: DRIVING TOWARD A WHOLE GREATER THAN PARTS](https://www.w3.org/blog/2020/05/payments-and-authentication-driving-toward-a-whole-greater-than-parts/))를 참고했습니다.
 
 
 
@@ -601,14 +607,6 @@ Web Payments와 Android의 [Trusted Web Activities](https://developers.google.co
 - 가이드 문서: https://web.dev/android-payment-apps-developers-guide/
 
 
-## 보완 도구
-
-- Payment Request API 표준의 호환성을 위해 아래 링크의 shim을 적용하는게 좋습니다.
-https://developers.google.com/web/fundamentals/payments#payment_request_api_%EC%8B%AC_%EB%A1%9C%EB%93%9C
-- Apple Pay를 지원해야 할 경우 아래 링크의 Payment Request Wrapper를 활용할 수 있습니다.
-https://github.com/GoogleChromeLabs/appr-wrapper
-
-
 
 # 참고 자료
 
@@ -619,8 +617,8 @@ https://github.com/GoogleChromeLabs/appr-wrapper
   - Payment Handler API: https://www.w3.org/TR/payment-handler/
   - Payment Method Identifiers: https://www.w3.org/TR/payment-method-id/
   - Payment Method Manifest: https://www.w3.org/TR/payment-method-manifest/
-- GitHub Repo: https://github.com/w3c/payment-request
-- MDN Payment Request API: https://developer.mozilla.org/en-US/docs/Web/API/Payment_Request_API
 - The Evolution of Payment Apps
   - https://www.w3.org/blog/wpwg/2020/05/18/the-evolution-of-payment-apps-i-of-ii/
   - https://www.w3.org/blog/wpwg/2020/05/18/the-evolution-of-payment-apps-ii-of-ii/
+- GitHub Repo: https://github.com/w3c/payment-request
+- MDN Payment Request API: https://developer.mozilla.org/en-US/docs/Web/API/Payment_Request_API
