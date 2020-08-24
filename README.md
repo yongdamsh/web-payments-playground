@@ -561,7 +561,7 @@ Payment Handler API를 갖춘 페이지에서 아래의 보안, 인증 관련 We
 
 WebAuthn은 브라우저에서 비밀번호 없이 인증하기 위한 Web API의 명세로 FIDO(**F**ast **ID**entity **O**nline) 기반의 인증 메커니즘입니다. 정확히는 [FIDO 2.0](https://fidoalliance.org/specifications/)의 메인 컴포넌트 중 하나입니다. 이 명세를 통해 웹에서도 [생체 인증](https://youtu.be/ZXmKKV7R72c?t=369) 연동이 가능합니다.
 
-지난 5월 Web Payments Working Group에서 개최한 code-a-thon에서 나온 아이디어의 [데모 영상](https://www.w3.org/2020/05/entersekt_consent2.mov)을 참고하세요.
+지난 5월 Web Payments Working Group에서 개최한 code-a-thon에서 나온 아이디어의 [데모 영상](/docs/video/entersekt_consent2.mp4)을 참고하세요. (출처: [Code-a-Thon Recap](https://www.w3.org/blog/wpwg/2020/06/18/code-a-thon-recap/))
 
 
 ### [Credential Management API](https://www.w3.org/TR/credential-management-1/) Support
@@ -585,7 +585,7 @@ Web Payments와 Android의 [Trusted Web Activities](https://developers.google.co
 
 ### QR Codes for Multi-Device Checkout
 
-결제 시 QR 코드를 생성하고, 다른 기기에서 해당 QR을 스캔해 결제를 진행합니다. 데스크톱 환경에서 앱카드로 결제하는 시나리오와 유사해 보입니다. 데모 영상은 [여기](https://www.w3.org/2020/05/entersekt_qr.mov)를 참고하세요.
+결제 시 QR 코드를 생성하고, 다른 기기에서 해당 QR을 스캔해 결제를 진행합니다. 데스크톱 환경에서 앱카드로 결제하는 시나리오와 유사해 보입니다. 데모 영상은 [여기](/docs/video/entersekt_qr.mp4)를 참고하세요. (출처: [Code-a-Thon Recap](https://www.w3.org/blog/wpwg/2020/06/18/code-a-thon-recap/))
 
 ### Open Banking
 
